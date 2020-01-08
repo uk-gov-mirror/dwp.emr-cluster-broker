@@ -1,0 +1,50 @@
+{
+  "instanceGroups": [
+    {
+      "name": "large_cluster_master",
+      "instanceRole": "MASTER",
+      "instanceType": "m5.4xlarge",
+      "instanceCount": 1,
+      "ebsConfiguration": {
+        "ebsBlockDeviceConfigs": [
+          {
+            "volumeSpecification": {
+              "volumeType": "gp2",
+              "sizeInGB": 128
+            },
+            "volumesPerInstance": 1
+          }
+        ],
+        "ebsOptimized": false
+      }
+    },
+    {
+      "name": "large_cluster_core",
+      "instanceRole": "CORE",
+      "instanceType": "m5.4xlarge",
+      "instanceCount": 3,
+      "ebsConfiguration": {
+        "ebsBlockDeviceConfigs": [
+          {
+            "volumeSpecification": {
+              "volumeType": "gp2",
+              "sizeInGB": 128
+            },
+            "volumesPerInstance": 1
+          }
+        ],
+        "ebsOptimized": false
+      }
+    }
+  ],
+  "terminationProtected": false,
+  "emrManagedMasterSecurityGroup": "TODO",
+  "emrManagedSlaveSecurityGroup": "TODO",
+  "serviceAccessSecurityGroup": "TODO",
+  "additionalMasterSecurityGroups": [
+    "TODO"
+  ],
+  "additionalSlaveSecurityGroups": [
+    "TODO"
+  ]
+}
