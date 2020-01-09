@@ -20,3 +20,6 @@ logs/
 *.crt
 *.p12
 .idea
+
+# Testing
+.kotlintest

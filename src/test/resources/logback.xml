@@ -1,0 +1,19 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%level] [%file:%method:%line] %message%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--
+    The org.apache http library is used by the Spring MVC to perform http requests This can be incredibly
+    noisy when running tests in DEBUG mode. The following config silences the http library.
+    -->
+    <logger name="org.apache" level="ERROR" additivity="true">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

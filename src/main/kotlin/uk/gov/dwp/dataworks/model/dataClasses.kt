@@ -9,8 +9,6 @@ import java.lang.IllegalArgumentException
 data class CreationRequest @JsonCreator constructor(
         val name: String,
         val releaseLabel: String,
-        val logUri: String,
-        val securityConfig: String,
         val serviceRole: String,
         val jobFlowRole: String,
         val customInstanceConfig: CustomInstanceConfig,
@@ -32,9 +30,14 @@ enum class InstanceTemplate(val fileName: String) {
     MEDIUM("medium.json"),
     LARGE("large.json");
 
+    private lateinit var jobFlowInstancesConfig: JobFlowInstancesConfig.Builder
+
     fun get(): JobFlowInstancesConfig.Builder {
-        val fileContents = this::class.java.getResourceAsStream("/instanceConfigurations/$fileName")
-                ?: throw IllegalArgumentException("Cannot find file $fileName to create template")
-        return ObjectMapper().readValue(fileContents, JobFlowInstancesConfig.serializableBuilderClass())
+        if (!this::jobFlowInstancesConfig.isInitialized) {
+            val fileContents = this::class.java.getResourceAsStream("/instanceConfigurations/$fileName")
+                    ?: throw IllegalArgumentException("Cannot find file $fileName to create template")
+            jobFlowInstancesConfig = ObjectMapper().readValue(fileContents, JobFlowInstancesConfig.serializableBuilderClass())
+        }
+        return jobFlowInstancesConfig
     }
 }

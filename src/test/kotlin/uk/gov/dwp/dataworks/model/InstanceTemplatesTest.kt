@@ -8,7 +8,7 @@ import software.amazon.awssdk.services.emr.model.JobFlowInstancesConfig
 
 class InstanceTemplatesTest {
     @Test
-    fun `Ensure all instance templates are present`(instanceTemplate: InstanceTemplate) {
+    fun `Ensure all instance templates are present`() {
         InstanceTemplate.values()
                 .map { it.fileName }
                 .forEach {
