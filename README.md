@@ -21,6 +21,11 @@ tasks.named("build") {
 }
 ```
 
+## Configuration
+Although the Cluster Broker uses Spring we want to provide a way of deploying and configuring the application via tools such as Terraform. As a result, we substitute configuration items with a `ConfigurationService` class that will resolve config via env vars.
+
+Possible configurations known to the app can be found in the `ConfigKey` enum. If any of these are not present at runtime the app will not fail until the item has been resolved by the service.
+
 ## API Documentation
 Our API follows the [Open API](https://github.com/OAI/OpenAPI-Specification) specification to gain the benefit of the API self-describing itself, from endpoints and request methods to example responses.
 

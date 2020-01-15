@@ -1,10 +1,11 @@
 package uk.gov.dwp.dataworks.services
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.junit4.SpringRunner
 import software.amazon.awssdk.regions.Region
@@ -22,16 +23,25 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @RunWith(SpringRunner::class)
-@WebMvcTest(ClusterCreationService::class)
+@WebMvcTest(ClusterCreationService::class, ConfigurationService::class)
 class ClusterCreationServiceTest {
-    @Value("\${clusterBroker.amiSearchPattern}")
-    private lateinit var amiSearchPattern: String
 
-    @Value("\${clusterBroker.jobFlowRoleBlacklist}")
-    private lateinit var jobFlowRoleBlacklist: List<String>
+    @Autowired
+    private lateinit var configService: ConfigurationService
 
     @Autowired
     private lateinit var clusterCreationService: ClusterCreationService
+
+    @Before
+    fun setEnvVars() {
+        System.setProperty(ConfigKey.AMI_SEARCH_PATTERN.key, "redhat*")
+        System.setProperty(ConfigKey.JOB_FLOW_ROLE_BLACKLIST.key, "blacklisted_role,another_blacklisted_role")
+    }
+
+    @After
+    fun clearEnvVars() {
+        ConfigKey.values().forEach { System.clearProperty(it.key) }
+    }
 
     @Test
     fun `Formats Steps correctly`() {
@@ -68,7 +78,7 @@ class ClusterCreationServiceTest {
         assertThat(actual).isFalse()
     }
 
-    fun createStep(stepName: String): StepConfig {
+    private fun createStep(stepName: String): StepConfig {
         return StepConfig.builder()
                 .name(stepName)
                 .actionOnFailure(ActionOnFailure.CONTINUE)

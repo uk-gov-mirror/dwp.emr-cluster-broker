@@ -1,8 +1,7 @@
 package uk.gov.dwp.dataworks.services
 
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.ec2.Ec2Client
 import software.amazon.awssdk.services.ec2.model.DescribeImagesRequest
 import software.amazon.awssdk.services.ec2.model.Filter
@@ -19,55 +18,47 @@ import software.amazon.awssdk.services.emr.model.Tag
 import uk.gov.dwp.dataworks.model.CreationRequest
 import uk.gov.dwp.dataworks.model.CustomInstanceConfig
 import uk.gov.dwp.dataworks.model.Step
+import uk.gov.dwp.dataworks.services.ConfigKey.AMI_SEARCH_PATTERN
+import uk.gov.dwp.dataworks.services.ConfigKey.EMR_RELEASE_LABEL
+import uk.gov.dwp.dataworks.services.ConfigKey.JOB_FLOW_ROLE_BLACKLIST
+import uk.gov.dwp.dataworks.services.ConfigKey.S3_LOG_URI
+import uk.gov.dwp.dataworks.services.ConfigKey.SECURITY_CONFIGURATION
 
 @Service
-class ClusterCreationService(private val emrClient: EmrAsyncClient = EmrAsyncClient.builder().region(Region.EU_WEST_1).build()) {
-
-    @Value("\${clusterBroker.amiSearchPattern}")
-    private lateinit var amiSearchPattern: String
-
-    @Value("\${clusterBroker.emrReleaseLabel}")
-    private lateinit var emrReleaseLabel: String
-
-    @Value("\${clusterBroker.s3LogUri}")
-    private lateinit var s3LogUri: String
-
-    @Value("\${clusterBroker.securityConfiguration}")
-    private lateinit var securityConfiguration: String
-
-    @Value("\${clusterBroker.jobFlowRoleBlacklist}")
-    private lateinit var jobFlowRoleBlacklist: List<String>
+class ClusterCreationService {
+    @Autowired
+    private lateinit var configService: ConfigurationService
 
     fun jobFlowRoleIsBlacklisted(role: String): Boolean {
-        return jobFlowRoleBlacklist.contains(role)
+        return configService.getListConfig(JOB_FLOW_ROLE_BLACKLIST).contains(role)
     }
 
     fun submitStepRequest(clusterId: String, creationRequest: CreationRequest) {
         val clusterRequest = RunJobFlowRequest.builder()
                 .name(clusterId)
-                .releaseLabel(emrReleaseLabel)
+                .releaseLabel(configService.getStringConfig(EMR_RELEASE_LABEL))
                 .customAmiId(getAmiId())
                 .repoUpgradeOnBoot(RepoUpgradeOnBoot.NONE)
                 .steps(formatSteps(creationRequest.steps))
-                .logUri(s3LogUri)
+                .logUri(configService.getStringConfig(S3_LOG_URI))
                 .serviceRole(creationRequest.serviceRole)
                 .jobFlowRole(creationRequest.jobFlowRole)
-                .securityConfiguration(securityConfiguration)
+                .securityConfiguration(configService.getStringConfig(SECURITY_CONFIGURATION))
                 .applications(creationRequest.applications.map { Application.builder().name(it).build() })
                 .instances(formatInstanceConfig(creationRequest.customInstanceConfig))
                 .tags(Tag.builder().key("createdBy").value("clusterBroker").build())
                 .build()
 
-        emrClient.runJobFlow(clusterRequest)
+        EmrAsyncClient.builder().region(configService.awsRegion).build().runJobFlow(clusterRequest)
     }
 
     fun getAmiId(): String {
-        val images = Ec2Client.builder().region(Region.EU_WEST_2).build()
+        val images = Ec2Client.builder().region(configService.awsRegion).build()
                 .describeImages(
                         DescribeImagesRequest.builder()
                                 .filters(Filter.builder()
                                         .name("name")
-                                        .values(amiSearchPattern).build())
+                                        .values(configService.getStringConfig(AMI_SEARCH_PATTERN)).build())
                                 .build())
                 .images()
                 .toMutableList()
