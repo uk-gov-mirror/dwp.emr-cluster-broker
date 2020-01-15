@@ -34,22 +34,6 @@ class ClusterCreationServiceTest {
     private lateinit var clusterCreationService: ClusterCreationService
 
     @Test
-    fun `Can retrieve latest AMI from AWS`() {
-        val allImages = Ec2Client.builder().region(Region.EU_WEST_2).build()
-                .describeImages(
-                        DescribeImagesRequest.builder()
-                                .filters(Filter.builder()
-                                        .name("name")
-                                        .values(amiSearchPattern).build())
-                                .build())
-                .images()
-                .toMutableList()
-        allImages.sortByDescending { LocalDate.parse(it.creationDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")) }
-        val expectedImageId = allImages.first().imageId()
-        assertThat(clusterCreationService.getAmiId()).isEqualTo(expectedImageId)
-    }
-
-    @Test
     fun `Formats Steps correctly`() {
         val expectedSteps = listOf(createStep("step1"), createStep("step2"), createStep("step3"))
         val actualSteps = clusterCreationService.formatSteps(listOf(

@@ -1,5 +1,5 @@
 # EMR Cluster Broker
-A lightweight Spring Boot API to passthrough requests to AWS SDK and create EMR clusters. This API is going to be part of the backbone of the architecture in analytical and batch jobs. The API will allow on-demand, opinionated clusters to be launched when required for analytics or regular jobs. Sizes are templated and are found in `/src/main/resources/instanceConfigurations`.
+A lightweight Spring Boot API to pass-through requests to AWS SDK and create EMR clusters. This API is going to be part of the backbone of the architecture in analytical and batch jobs. The API will allow on-demand, opinionated clusters to be launched when required for analytics or regular jobs. Sizes are templated and are found in `/src/main/resources/instanceConfigurations`.
 
 Future case studies will drive more requirements.
 

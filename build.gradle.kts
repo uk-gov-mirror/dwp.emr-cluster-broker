@@ -1,4 +1,4 @@
-
+import com.google.cloud.tools.jib.gradle.JibExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -60,5 +60,11 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "1.8"
+    }
+}
+
+configure<JibExtension> {
+    to {
+        image = "dwpdigital/emr-cluster-broker"
     }
 }
