@@ -29,6 +29,16 @@ class ConfigurationService {
         }
     }
 
+    fun getAllConfig(): Map<ConfigKey, Any> {
+        ConfigKey.values().forEach {
+            if(it.isList)
+                getListConfig(it)
+            else
+                getStringConfig(it)
+        }
+        return stringConfigs.plus(listConfigs)
+    }
+
     fun clear() {
         stringConfigs.clear()
         listConfigs.clear()
