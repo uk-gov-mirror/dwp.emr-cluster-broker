@@ -46,7 +46,6 @@ Navigate to root of deployed instance.
 ## Monitoring
 The API has two-fold monitoring available to it - both provided via Spring.
 
-Default metrication is handled by [Spring Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html), providing standard metrication of spring to numerous endpoints under `/actuator`.
+Default metrication is handled by [Spring Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html). [All endpoints](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints) not remapped (See below) can be found on their respective paths under the root `/`. Some endpoints have been remapped to conform to standards and avoid clashing, refer to `/resrouces/applciation.properties` for details on remapped endpoints 
 
 Any custom metrication is provided with the help of [Spring metrics](https://docs.spring.io/spring-metrics/docs/current/public/prometheus), whereby a [Prometheus](https://prometheus.io/) compliant endpoint is provided. To expose custom metrics to the prometheus pull api, the `PrometheusMetricsService` class should be used across the project. 
- 
