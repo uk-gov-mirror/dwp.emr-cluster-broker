@@ -76,3 +76,42 @@ The API has two-fold monitoring available to it - both provided via Spring.
 Default metrication is handled by [Spring Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html). [All endpoints](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints) not remapped (See below) can be found on their respective paths under the root `/`. Some endpoints have been remapped to conform to standards and avoid clashing, refer to `/resrouces/applciation.properties` for details on remapped endpoints 
 
 Any custom metrication is provided with the help of [Spring metrics](https://docs.spring.io/spring-metrics/docs/current/public/prometheus), whereby a [Prometheus](https://prometheus.io/) compliant endpoint is provided. To expose custom metrics to the prometheus pull api, the `PrometheusMetricsService` class should be used across the project. 
+ 
+## Deployment
+Cluster Broker uses [Terraform](https://www.terraform.io/) to handle deployments to [AWS Fargate](https://aws.amazon.com/fargate). Terraform code can be found in `terraform/deploy`.
+
+*Note that no `.tfvars` files should be committed to the repository due to the potential revelation of secrets. See [secrets](#Secrets) for further information*
+
+### Deployment Steps
+
+1. Use `make` to download variables & interpret Jinja templates ([See below](#Secrets))
+    ```
+    make bootstrap
+    ```
+
+#### Please note, the following steps need to be carried out in both terraform/deploy/infra/, and terraform/deploy/apps/cluster_broker/
+
+2. Initialise Terraform
+    ```
+    terraform init
+    ```
+3. Run Terraform plan and ensure everything is as expected
+    ```
+    terraform plan
+    ```
+4. Once the plan is assured, apply the changes
+    ```
+    terraform apply
+    ```
+ 
+### Secrets
+For Terraform to deploy the service, we ned to include information which we do not want to commit. To enable us to use these values in Terraform code we have a variable inside AWS parameter store. Python and [Jinja2](https://jinja.palletsprojects.com/en/2.10.x/) are used to download and insert the values into a template and write out the final TF code.
+
+[Make](https://www.gnu.org/software/make/) is used to download & interpolate variables and create the required `.tf` files:
+```
+$ make bootstrap
+```
+The Make file has the following dependencies:
+- Python3 & pip3.
+- Terraform
+- AWS credentials allowing download of the variables from AWS.
