@@ -18,7 +18,34 @@ docker run -p 8080:8080  -e AWS_REGION=<VALUE> -e AMI_SEARCH_PATTERN=<VALUE> -e 
 ```
 Ensuring that `<VALUE>` is replaced with a suitable value for that `ConfigKey` entry.
 
-## Configuration
+## Submitting a Cluster creation step
+To submit a request to the cluster broker for a new cluster the `/cluster/submit`endpoint needs to be `POST`-ed to. The content of the `POST` request is defined by the `CreationRequest` class. An example request is as follows:
+```json
+{
+  "name": "test-cluster",
+  "releaseLabel": "emr-5.28.0",
+  "serviceRole": "arn:aws:iam::000000000000:role/service_role",
+  "jobFlowRole": "arn:aws:iam::000000000000:instance-profile/AE_EMR_EC2_Role",
+  "customInstanceConfig": {
+    "useSpotPricing": false,
+    "instanceTemplate": "SMALL",
+    "keepAlivePostJob": true
+  },
+  "steps": [
+    {
+      "name": "emr-setup",
+      "actionOnFailure": "CONTINUE",
+      "jarPath": "s3://s3-bucket-id/jar/prefix"
+    }
+  ],
+  "applications": [
+    "Spark"
+  ]
+}
+``` 
+
+
+## API Configuration
 Although the Cluster Broker uses Spring we want to provide a way of deploying and configuring the application via tools such as Terraform. As a result, we substitute configuration items with a `ConfigurationService` class that will resolve config via env vars.
 
 Possible configurations known to the app can be found in the `ConfigKey` enum. If any of these are not present at runtime the app will not fail until the item has been resolved by the service.
