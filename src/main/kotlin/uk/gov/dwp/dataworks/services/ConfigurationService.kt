@@ -1,5 +1,7 @@
 package uk.gov.dwp.dataworks.services
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.regions.Region
 import uk.gov.dwp.dataworks.exception.SystemArgumentException
@@ -12,19 +14,22 @@ import uk.gov.dwp.dataworks.services.ConfigKey.AWS_REGION
  */
 @Service
 class ConfigurationService {
+    @Autowired
+    private lateinit var env: Environment
+
     private val stringConfigs: MutableMap<ConfigKey, String> = mutableMapOf()
     private val listConfigs: MutableMap<ConfigKey, List<String>> = mutableMapOf()
     val awsRegion: Region = kotlin.runCatching { Region.of(getStringConfig(AWS_REGION)) }.getOrDefault(Region.EU_WEST_2)
 
     final fun getStringConfig(configKey: ConfigKey): String {
         return stringConfigs.computeIfAbsent(configKey) {
-            System.getProperty(configKey.key) ?: throw SystemArgumentException("No value found for ${configKey.key}")
+            env.getProperty(configKey.key) ?: throw SystemArgumentException("No value found for ${configKey.key}")
         }
     }
 
     final fun getListConfig(configKey: ConfigKey): List<String> {
         return listConfigs.computeIfAbsent(configKey) {
-            val sysConfig = System.getProperty(configKey.key) ?: throw SystemArgumentException("No value found for ${configKey.key}")
+            val sysConfig = env.getProperty(configKey.key) ?: throw SystemArgumentException("No value found for ${configKey.key}")
             sysConfig.split(",").toList()
         }
     }

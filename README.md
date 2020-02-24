@@ -4,15 +4,24 @@ A lightweight Spring Boot API to pass-through requests to AWS SDK and create EMR
 Future case studies will drive more requirements.
 
 ## Building
-emr-cluster-broker takes advantage of Docker to run the API in a lightweight and portable manner. 
+emr-cluster-broker takes advantage of Docker to run the API in a lightweight and portable manner. You will note that there is no `Dockerfile` present in this repo. The reason for this is that we are using [Google's Jib](https://github.com/GoogleContainerTools/jib)
+
+### Why Jib?
+Speed, size, security... jib builds container images much, much faster than a docker build process. They’re much smaller, as the images are practically just a JVM (there’s essentially no OS - they are `distroless`). As there’s essentially no OS, they have a much smaller potential vulnerability footprint, which is great from a security perspective.
 
 ### How to build
 To build the Docker image to a local Docker daemon, run the following from the root of the project.
 ```
-./gradlew clean build
-docker build --tag dwpdigital/emr-cluster-broker:latest .
+./gradlew jibDockerBuild
 ```
-And to start the image:
+This task can also be added as a dependency on the build by adding the following to your `build.gradle.kts` file.
+```
+tasks.named("build") {
+    dependsOn(":jibDockerBuild")
+}
+```
+
+To start the image:
 ```
 docker run -p 8080:8080  -e AWS_REGION=<VALUE> -e AMI_SEARCH_PATTERN=<VALUE> -e AMI_OWNER_IDS=<VALUE> -e EMR_RELEASE_LABEL=<VALUE> -e S3_LOG_URI=<VALUE> -e SECURITY_CONFIGURATION=<VALUE> -e JOB_FLOW_ROLE_BLACKLIST=<VALUE>   AWS_REGION="testRegion" dwpdigital/emr-cluster-broker
 ```

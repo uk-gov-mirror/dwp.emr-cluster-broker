@@ -1,8 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.2.2.RELEASE"
+    id("org.springframework.boot") version "2.2.4.RELEASE"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
+    id("com.google.cloud.tools.jib") version "2.0.0"
     kotlin("jvm") version "1.3.21"
     kotlin("plugin.spring") version "1.3.21"
 }
@@ -30,7 +31,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springdoc:springdoc-openapi-core:1.1.49")
     // AWS things
-    implementation(platform("software.amazon.awssdk:bom:2.10.24"))
+    implementation(platform("software.amazon.awssdk:bom:2.10.70"))
     implementation("software.amazon.awssdk:emr")
     implementation("software.amazon.awssdk:ec2")
     // Monitoring things

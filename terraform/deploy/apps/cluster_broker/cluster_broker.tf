@@ -28,31 +28,31 @@ module "ecs-fargate-task-definition" {
   account                      = lookup(local.account, local.environment)
   environment = [
     {
-      name  = "AWS_REGION"
+      name  = "clusterBroker_awsRegion"
       value = var.vpc_region
     },
     {
-      name  = "AMI_SEARCH_PATTERN"
+      name  = "clusterBroker_amiSearchPattern"
       value = "*-emr-ami*"
     },
     {
-      name  = "AMI_OWNER_IDS"
-      value = "${lookup(local.account, "management")}"
+      name  = "clusterBroker_amiOwnerIds"
+      value = local.account["management"]
     },
     {
-      name  = "EMR_RELEASE_LABEL"
+      name  = "clusterBroker_emrReleaseLabel"
       value = "emr-5.28.0"
     },
     {
-      name  = "S3_LOG_URI"
+      name  = "clusterBroker_s3LogUri"
       value = "TBC"
     },
     {
-      name  = "SECURITY_CONFIGURATION"
+      name  = "clusterBroker_securityConfiguration"
       value = var.name_prefix
     },
     {
-      name  = "JOB_FLOW_ROLE_BLACKLIST"
+      name  = "clusterBroker_jobFlowRoleBlacklist"
       value = ""
     }
   ]
