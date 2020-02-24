@@ -22,6 +22,10 @@ import java.util.UUID
 
 @RestController
 class ClusterCreationController {
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(ClusterCreationController::class.java)
+    }
+
     @Autowired
     private lateinit var clusterCreationService: ClusterCreationService
 
@@ -37,7 +41,7 @@ class ClusterCreationController {
     @PostMapping("/cluster/submit")
     @ResponseStatus(HttpStatus.OK)
     fun submitRequestToCluster(@RequestBody requestBody: CreationRequest): String {
-        logger.debug("Received submit event with name: ${requestBody.name} and steps ${requestBody.steps.map {it.name}}")
+        logger.info("Received submit event with name: ${requestBody.name} and steps ${requestBody.steps.map {it.name}}.")
         val clusterId = "${requestBody.name}-${UUID.randomUUID()}"
 
         if(clusterCreationService.jobFlowRoleIsBlacklisted(requestBody.jobFlowRole)) {
@@ -46,7 +50,7 @@ class ClusterCreationController {
         clusterCreationService.submitStepRequest(clusterId, requestBody)
         prometheusMetricsService.incrementCounter("clusters_created")
 
-        logger.debug("Submitted request $clusterId.")
+        logger.info("Submitted request $clusterId.")
         return clusterId
     }
 
@@ -54,9 +58,5 @@ class ClusterCreationController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "JobFlowRole is blacklisted and shouldn't be used")
     fun handleInvalidJobFlowRole() {
         // Do nothing - annotations handle response
-    }
-
-    companion object {
-        val logger: Logger = LoggerFactory.getLogger(ClusterCreationController::class.java)
     }
 }

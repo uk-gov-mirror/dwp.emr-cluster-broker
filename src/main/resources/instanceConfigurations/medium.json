@@ -38,13 +38,9 @@
     }
   ],
   "terminationProtected": false,
-  "emrManagedMasterSecurityGroup": "TODO",
-  "emrManagedSlaveSecurityGroup": "TODO",
-  "serviceAccessSecurityGroup": "TODO",
-  "additionalMasterSecurityGroups": [
-    "TODO"
-  ],
-  "additionalSlaveSecurityGroups": [
-    "TODO"
-  ]
+  "emrManagedMasterSecurityGroup": "ElasticMapReduce-Master-Private",
+  "emrManagedSlaveSecurityGroup": "ElasticMapReduce-Slave-Private",
+  "serviceAccessSecurityGroup": "ElasticMapReduce-ServiceAccess",
+  "additionalMasterSecurityGroups": [],
+  "additionalSlaveSecurityGroups": []
 }

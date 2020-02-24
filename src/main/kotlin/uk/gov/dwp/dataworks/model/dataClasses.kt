@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.databind.ObjectMapper
 import software.amazon.awssdk.services.emr.model.ActionOnFailure
 import software.amazon.awssdk.services.emr.model.JobFlowInstancesConfig
-import java.lang.IllegalArgumentException
 
 data class CreationRequest @JsonCreator constructor(
         val name: String,
@@ -16,6 +15,7 @@ data class CreationRequest @JsonCreator constructor(
         val applications: List<String>)
 
 data class CustomInstanceConfig @JsonCreator constructor(
+        val ec2SubnetId: String,
         val useSpotPricing: Boolean,
         val instanceTemplate: InstanceTemplate,
         val keepAlivePostJob: Boolean)

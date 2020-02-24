@@ -8,10 +8,6 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.junit4.SpringRunner
-import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.ec2.Ec2Client
-import software.amazon.awssdk.services.ec2.model.DescribeImagesRequest
-import software.amazon.awssdk.services.ec2.model.Filter
 import software.amazon.awssdk.services.emr.model.ActionOnFailure
 import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig
 import software.amazon.awssdk.services.emr.model.MarketType
@@ -19,8 +15,6 @@ import software.amazon.awssdk.services.emr.model.StepConfig
 import uk.gov.dwp.dataworks.model.CustomInstanceConfig
 import uk.gov.dwp.dataworks.model.InstanceTemplate
 import uk.gov.dwp.dataworks.model.Step
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @RunWith(SpringRunner::class)
 @WebMvcTest(ClusterCreationService::class, ConfigurationService::class)
@@ -56,7 +50,7 @@ class ClusterCreationServiceTest {
 
     @Test
     fun `Can reconfigure JobConfig with custom values`() {
-        val customConfig = CustomInstanceConfig(true, InstanceTemplate.LARGE, false)
+        val customConfig = CustomInstanceConfig("0.0.0.0/0", true, InstanceTemplate.LARGE, false)
         val actualConfig = clusterCreationService.formatInstanceConfig(customConfig)
 
         actualConfig.instanceGroups().forEach { assertThat(it.market()).isEqualTo(MarketType.SPOT) }

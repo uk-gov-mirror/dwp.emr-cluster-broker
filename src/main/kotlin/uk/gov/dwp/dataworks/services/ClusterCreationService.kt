@@ -1,5 +1,7 @@
 package uk.gov.dwp.dataworks.services
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.ec2.Ec2Client
@@ -26,6 +28,10 @@ import uk.gov.dwp.dataworks.services.ConfigKey.SECURITY_CONFIGURATION
 
 @Service
 class ClusterCreationService {
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(ClusterCreationService::class.java)
+    }
+
     @Autowired
     private lateinit var configService: ConfigurationService
 
@@ -33,9 +39,10 @@ class ClusterCreationService {
         return configService.getListConfig(JOB_FLOW_ROLE_BLACKLIST).contains(role)
     }
 
-    fun submitStepRequest(clusterId: String, creationRequest: CreationRequest) {
+    fun submitStepRequest(clusterName: String, creationRequest: CreationRequest) {
         val clusterRequest = RunJobFlowRequest.builder()
-                .name(clusterId)
+                .name(clusterName)
+                .visibleToAllUsers(true)
                 .releaseLabel(configService.getStringConfig(EMR_RELEASE_LABEL))
                 .customAmiId(getAmiId())
                 .repoUpgradeOnBoot(RepoUpgradeOnBoot.NONE)
@@ -49,7 +56,12 @@ class ClusterCreationService {
                 .tags(Tag.builder().key("createdBy").value("clusterBroker").build())
                 .build()
 
-        EmrAsyncClient.builder().region(configService.awsRegion).build().runJobFlow(clusterRequest)
+        logger.info("Starting cluster $clusterName.")
+        val response = EmrAsyncClient.builder().region(configService.awsRegion).build().runJobFlow(clusterRequest)
+        response.whenComplete { _, prevStepError ->
+            if (prevStepError != null)
+                logger.error("Failed to start cluster $clusterName", prevStepError)
+        }
     }
 
     fun getAmiId(): String {
@@ -85,6 +97,7 @@ class ClusterCreationService {
 
         return instancesConfigBuilder
                 .instanceGroups(instanceGroups)
+                .ec2SubnetId(customInstanceConfig.ec2SubnetId)
                 .keepJobFlowAliveWhenNoSteps(customInstanceConfig.keepAlivePostJob)
                 .build()
     }

@@ -2,18 +2,9 @@ package uk.gov.dwp.dataworks.controllers
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility
 import com.fasterxml.jackson.annotation.PropertyAccessor
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.core.io.IOContext
-import com.fasterxml.jackson.core.json.JsonGeneratorImpl
-import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doNothing
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -37,7 +28,6 @@ import uk.gov.dwp.dataworks.model.InstanceTemplate
 import uk.gov.dwp.dataworks.model.Step
 import uk.gov.dwp.dataworks.services.ClusterCreationService
 import uk.gov.dwp.dataworks.services.PrometheusMetricsService
-import java.io.IOException
 
 
 @RunWith(SpringRunner::class)
@@ -95,7 +85,7 @@ class ClusterCreationControllerTest {
                 "releaseLabel",
                 "testServiceRole",
                 "testFlowRole",
-                CustomInstanceConfig(false, InstanceTemplate.SMALL,false),
+                CustomInstanceConfig("0.0.0.0/0", false, InstanceTemplate.SMALL,false),
                 listOf(
                         Step("testStep1", ActionOnFailure.TERMINATE_JOB_FLOW, "test/jar/path/1"),
                         Step("testStep2", ActionOnFailure.CONTINUE, "test/jar/path/2")),

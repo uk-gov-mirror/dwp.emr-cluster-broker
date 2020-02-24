@@ -27,6 +27,7 @@ To submit a request to the cluster broker for a new cluster the `/cluster/submit
   "serviceRole": "arn:aws:iam::000000000000:role/service_role",
   "jobFlowRole": "arn:aws:iam::000000000000:instance-profile/AE_EMR_EC2_Role",
   "customInstanceConfig": {
+    "ec2SubnetId": "subnet-0000aaaa00a0000a0",
     "useSpotPricing": false,
     "instanceTemplate": "SMALL",
     "keepAlivePostJob": true
