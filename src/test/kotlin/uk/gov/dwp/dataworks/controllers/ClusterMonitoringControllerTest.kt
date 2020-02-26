@@ -50,4 +50,52 @@ class ClusterMonitoringControllerTest {
                 .andExpect(status().isOk)
                 .andExpect(content().string(expectedStatusReturnValue))
     }
+
+    @Test
+    fun `List endpoint returns '405 not supported' for POST requests`() {
+        mvc.perform(post("/cluster/list"))
+                .andExpect(status().isMethodNotAllowed)
+    }
+
+    @Test
+    fun `List clusters request successfully with proper request`() {
+        whenever(clusterMonitoringService.listAllClusters()).doReturn(expectedListReturnValue())
+
+        mvc.perform(get("/cluster/list"))
+                .andExpect(status().isOk)
+                .andExpect(content().string(expectedListReturnValue()))
+    }
+
+    private fun expectedListReturnValue(): String {
+        return """
+            {
+                "id": "j-A000AAAA00AA",
+                "name": "cb-created-cluster-<UUID>",
+                "status": {
+                  "stateChangeReason": {
+                    "message": "Terminated by user request",
+                    "codeAsString": "USER_REQUEST"
+                  },
+                  "timeline": {
+                    "creationDateTime": {
+                      "nano": 000000000,
+                      "epochSecond": 0000000000
+                    },
+                    "readyDateTime": {
+                      "nano": 000000000,
+                      "epochSecond": 0000000000
+                    },
+                    "endDateTime": {
+                      "nano": 000000000,
+                      "epochSecond": 0000000000
+                    }
+                  },
+                  "stateAsString": "TERMINATED"
+                },
+                "normalizedInstanceHours": 64,
+                "clusterArn": "arn:aws:elasticmapreduce:us-east-1:000000000000:cluster/j-A000AAAA00AA",
+                "outpostArn": null
+              }
+        """.trimIndent()
+    }
 }

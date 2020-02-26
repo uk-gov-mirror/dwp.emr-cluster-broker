@@ -42,7 +42,7 @@ class ClusterCreationController {
     @ResponseStatus(HttpStatus.OK)
     fun submitRequestToCluster(@RequestBody requestBody: CreationRequest): String {
         logger.info("Received submit event with name: ${requestBody.name} and steps ${requestBody.steps.map {it.name}}.")
-        val clusterId = "${requestBody.name}-${UUID.randomUUID()}"
+        val clusterId = "cb-${requestBody.name}-${UUID.randomUUID()}"
 
         if(clusterCreationService.jobFlowRoleIsBlacklisted(requestBody.jobFlowRole)) {
             throw InvalidJobFlowRoleException("JobFlowRole ${requestBody.jobFlowRole} is blacklisted and shouldn't be used")
