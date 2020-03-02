@@ -9,7 +9,7 @@ locals {
     {
       "containerPort" = var.container_port
       "hostPort"      = var.container_port
-      "protocol"      = "HTTP"
+      "protocol"      = "HTTPS"
     },
   ]
 }

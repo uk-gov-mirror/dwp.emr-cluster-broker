@@ -4,10 +4,7 @@ A lightweight Spring Boot API to pass-through requests to AWS SDK and create EMR
 Future case studies will drive more requirements.
 
 ## Building
-emr-cluster-broker takes advantage of Docker to run the API in a lightweight and portable manner. You will note that there is no `Dockerfile` present in this repo. The reason for this is that we are using [Google's Jib](https://github.com/GoogleContainerTools/jib)
-
-### Why Jib?
-Speed, size, security... jib builds container images much, much faster than a docker build process. They’re much smaller, as the images are practically just a JVM (there’s essentially no OS - they are `distroless`). As there’s essentially no OS, they have a much smaller potential vulnerability footprint, which is great from a security perspective.
+emr-cluster-broker takes advantage of Docker to run the API in a lightweight and portable manner. 	
 
 ### How to build
 To build the Docker image to a local Docker daemon, run the following from the root of the project.
@@ -16,18 +13,20 @@ To build the Docker image to a local Docker daemon, run the following from the r
 ```
 This task can also be added as a dependency on the build by adding the following to your `build.gradle.kts` file.
 ```
-tasks.named("build") {
-    dependsOn(":jibDockerBuild")
-}
+./gradlew clean build
+docker build --tag dwpdigital/emr-cluster-broker:latest .
 ```
 
 To start the image:
 ```
-docker run -p 8080:8080  -e AWS_REGION=<VALUE> -e AMI_SEARCH_PATTERN=<VALUE> -e AMI_OWNER_IDS=<VALUE> -e EMR_RELEASE_LABEL=<VALUE> -e S3_LOG_URI=<VALUE> -e SECURITY_CONFIGURATION=<VALUE> -e JOB_FLOW_ROLE_BLACKLIST=<VALUE>   AWS_REGION="testRegion" dwpdigital/emr-cluster-broker
+docker run -p 8443:8443 -e clusterBroker_awsRegion=<VALUE> -e clusterBroker_amiSearchPattern=<VALUE> -e clusterBroker_amiOwnerIds=<VALUE> -e clusterBroker_emrReleaseLabel=<VALUE> -e clusterBroker_s3LogUri=<VALUE> -e clusterBroker_securityConfiguration=<VALUE> -e clusterBroker_jobFlowRoleBlacklist=<VALUE> dwpdigital/emr-cluster-broker:latest
 ```
 Ensuring that `<VALUE>` is replaced with a suitable value for that `ConfigKey` entry.
 
-## Submitting a Cluster creation step
+## Sending API requests
+Since [#17](https://github.com/dwp/emr-cluster-broker/pull/17) the broker only accepts connections over HTTPS.
+
+### Submitting a Cluster creation step
 To submit a request to the cluster broker for a new cluster the `/cluster/submit`endpoint needs to be `POST`-ed to. The content of the `POST` request is defined by the `CreationRequest` class. An example request is as follows:
 ```json
 {
@@ -70,9 +69,9 @@ Our API follows the [Open API](https://github.com/OAI/OpenAPI-Specification) spe
 
 Locally:
 ```
-Run Application.kt -> Navigate to localhost:8080/
+Run Application.kt -> Navigate to https://localhost:8443/
 OR
-Build Docker container -> Run container & expose port 8080 -> Navigate to localhost:<exposed-port>/ 
+Build Docker container -> Run container & expose port 8443 -> Navigate to https://localhost:<exposed-port>/ 
 ```
 
 In Deployed instance
