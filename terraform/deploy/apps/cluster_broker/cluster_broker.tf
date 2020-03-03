@@ -98,6 +98,19 @@ module emr-security-config {
   name         = var.name_prefix
   emp_provider = "s3://${local.emr_encryption_materials_bucket}/encryption_materials_provider_jar/encryption-materials-provider-${local.emr_encryption_materials_version}.jar"
   region       = var.vpc_region
-  role_arn     = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
+  role_arn     = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
   common_tags  = local.common_tags
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# IAM EMR
+# ---------------------------------------------------------------------------------------------------------------------
+module iam-emr {
+  source        = "../../../modules/iam-emr"
+  name          = var.name_prefix
+  region        = var.vpc_region
+  role_arn      = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
+  common_tags   = local.common_tags
+  ebs_cmk       = data.terraform_remote_state.security-tools.outputs.ebs_cmk.arn
+  ingest_bucket = data.terraform_remote_state.ingestion.outputs.s3_buckets.input_bucket
 }
