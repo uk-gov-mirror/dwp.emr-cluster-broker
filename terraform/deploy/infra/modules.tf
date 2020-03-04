@@ -8,7 +8,7 @@ module cluster_broker_vpc {
   interface_vpce_source_security_group_ids   = []
   interface_vpce_subnet_ids                  = module.networking.outputs.aws_subnets_private[*].id
   region                                     = var.vpc_region
-  vpc_cidr_block                             = local.cidr_block[local.environment].cluster-broker-vpc
+  vpc_cidr_block                             = local.cidr_block[local.environment].emr-cluster-broker-vpc
   vpc_name                                   = local.name
 
   dynamodb_endpoint    = false

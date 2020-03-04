@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "write_s3_cb" {
     ]
 
     resources = [
-      "${var.ingest_bucket}",
+      "arn:aws:s3:::${var.ingest_bucket}",
     ]
   }
 
@@ -55,7 +55,7 @@ data "aws_iam_policy_document" "write_s3_cb" {
     ]
 
     resources = [
-      "${var.ingest_bucket}/business-data/hbase/*",
+      "arn:aws:s3:::${var.ingest_bucket}/business-data/hbase/*",
     ]
   }
 
