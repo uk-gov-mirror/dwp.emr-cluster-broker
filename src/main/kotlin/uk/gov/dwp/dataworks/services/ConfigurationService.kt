@@ -44,6 +44,10 @@ class ConfigurationService {
         return stringConfigs.plus(listConfigs)
     }
 
+    fun getIfEmpty(value: String, configKey: ConfigKey): String{
+        return if(value != "") value else getStringConfig(configKey)
+    }
+
     fun clear() {
         stringConfigs.clear()
         listConfigs.clear()
@@ -56,6 +60,10 @@ enum class ConfigKey(val key: String, val isList: Boolean) {
     AMI_OWNER_IDS("clusterBroker.amiOwnerIds", true),
     EMR_RELEASE_LABEL("clusterBroker.emrReleaseLabel", false),
     S3_LOG_URI("clusterBroker.s3LogUri", false),
+    SERVICE_ROLE("clusterBroker.serviceRole", false),
+    JOB_FLOW_ROLE("clusterBroker.jobFlowRole", false),
+    AUTO_SCALING_ROLE("clusterBroker.autoScalingRole", false),
+    HOSTED_ZONE_ID("clusterBroker.hostedZoneId", false),
     SECURITY_CONFIGURATION("clusterBroker.securityConfiguration", false),
     JOB_FLOW_ROLE_BLACKLIST("clusterBroker.jobFlowRoleBlacklist", true)
 }

@@ -54,6 +54,18 @@ module "ecs-fargate-task-definition" {
     {
       name  = "clusterBroker_jobFlowRoleBlacklist"
       value = ""
+    },
+    {
+      name  = "clusterBroker_jobFlowRole"
+      value = module.iam-emr.cb_job_flow_role
+    },
+    {
+      name  = "clusterBroker_serviceRole"
+      value = module.iam-emr.cb_service_role
+    },
+    {
+      name  = "clusterBroker_autoScalingRole"
+      value = module.iam-emr.cb_autoscaling_role
     }
   ]
 }

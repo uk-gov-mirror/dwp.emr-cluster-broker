@@ -19,7 +19,7 @@ docker build --tag dwpdigital/emr-cluster-broker:latest .
 
 To start the image:
 ```
-docker run -p 8443:8443 -e clusterBroker_awsRegion=<VALUE> -e clusterBroker_amiSearchPattern=<VALUE> -e clusterBroker_amiOwnerIds=<VALUE> -e clusterBroker_emrReleaseLabel=<VALUE> -e clusterBroker_s3LogUri=<VALUE> -e clusterBroker_securityConfiguration=<VALUE> -e clusterBroker_jobFlowRoleBlacklist=<VALUE> dwpdigital/emr-cluster-broker:latest
+docker run -p 8443:8443 -e clusterBroker_awsRegion=<VALUE> -e clusterBroker_amiSearchPattern=<VALUE> -e clusterBroker_amiOwnerIds=<VALUE> -e clusterBroker_emrReleaseLabel=<VALUE> -e clusterBroker_s3LogUri=<VALUE> -e clusterBroker_securityConfiguration=<VALUE> -e clusterBroker_jobFlowRoleBlacklist=<VALUE> -e clusterBroker_jobFlowRole=<VALUE> -e clusterBroker_serviceRole=<VALUE> -e clusterBroker_autoScalingRole=<VALUE> -e clusterBroker_hostedZoneID=<VALUE> dwpdigital/emr-cluster-broker:latest
 ```
 Ensuring that `<VALUE>` is replaced with a suitable value for that `ConfigKey` entry.
 
@@ -32,8 +32,9 @@ To submit a request to the cluster broker for a new cluster the `/cluster/submit
 {
   "name": "test-cluster",
   "releaseLabel": "emr-5.28.0",
-  "serviceRole": "arn:aws:iam::000000000000:role/service_role",
-  "jobFlowRole": "arn:aws:iam::000000000000:instance-profile/AE_EMR_EC2_Role",
+  "serviceRole": "arn:aws:iam::00000000000:role/service_role",
+  "jobFlowRole": "arn:aws:iam::00000000000:instance-profile/AE_EMR_EC2_Role",
+  "autoScalingRole": "arn:aws:iam::00000000000:role/auto_scaling_role",
   "customInstanceConfig": {
     "ec2SubnetId": "subnet-0000aaaa00a0000a0",
     "useSpotPricing": false,
@@ -53,6 +54,8 @@ To submit a request to the cluster broker for a new cluster the `/cluster/submit
 }
 ``` 
 
+### Parameter Reference
+`serviceRole`, `jobFlowRole` and `autoScalingRole` are optional - exclusion will revert to default values set by the cluster broker.
 
 ## API Configuration
 Although the Cluster Broker uses Spring we want to provide a way of deploying and configuring the application via tools such as Terraform. As a result, we substitute configuration items with a `ConfigurationService` class that will resolve config via env vars.

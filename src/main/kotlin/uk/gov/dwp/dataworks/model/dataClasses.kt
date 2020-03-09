@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.databind.ObjectMapper
 import software.amazon.awssdk.services.emr.model.ActionOnFailure
 import software.amazon.awssdk.services.emr.model.JobFlowInstancesConfig
+import java.time.ZoneId
 
 data class CreationRequest @JsonCreator constructor(
         val name: String,
         val releaseLabel: String,
-        val serviceRole: String,
-        val jobFlowRole: String,
+        val serviceRole: String = "",
+        val jobFlowRole: String = "",
+        val autoScalingRole: String = "",
+        val hostedZoneId: String = "",
         val customInstanceConfig: CustomInstanceConfig,
         val steps: List<Step>,
         val applications: List<String>)

@@ -85,6 +85,8 @@ class ClusterCreationControllerTest {
                 "releaseLabel",
                 "testServiceRole",
                 "testFlowRole",
+                "testAutoScalingRole",
+                "testHostedZoneId",
                 CustomInstanceConfig("0.0.0.0/0", false, InstanceTemplate.SMALL,false),
                 listOf(
                         Step("testStep1", ActionOnFailure.TERMINATE_JOB_FLOW, "test/jar/path/1"),

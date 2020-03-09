@@ -166,3 +166,42 @@ resource "aws_iam_role_policy_attachment" "emr_ebs_cmk" {
   role       = aws_iam_role.emr_service.id
   policy_arn = aws_iam_policy.emr_ebs_cmk.arn
 }
+
+resource "aws_iam_role" "emr_autoscaling_role" {
+  name               = "${var.name}_EMR_AutoScaling_Role"
+  assume_role_policy = data.aws_iam_policy_document.emr_autoscaling_role_assume_role.json
+  tags               = var.common_tags
+}
+
+data "aws_iam_policy_document" "emr_autoscaling_role_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "elasticmapreduce.amazonaws.com",
+        "application-autoscaling.amazonaws.com"
+      ]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "elastic_map_reduce_for_auto_scaling_role" {
+  name   = "${var.name}_ElasticMapReduceforAutoScalingRole"
+  role   = aws_iam_role.emr_autoscaling_role.id
+  policy = data.aws_iam_policy_document.elastic_map_reduce_for_auto_scaling_role.json
+}
+
+data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "cloudwatch:DescribeAlarms",
+      "elasticmapreduce:ListInstanceGroups",
+      "elasticmapreduce:ModifyInstanceGroups"
+    ]
+    resources = ["*"]
+  }
+}

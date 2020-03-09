@@ -20,11 +20,7 @@ import software.amazon.awssdk.services.emr.model.Tag
 import uk.gov.dwp.dataworks.model.CreationRequest
 import uk.gov.dwp.dataworks.model.CustomInstanceConfig
 import uk.gov.dwp.dataworks.model.Step
-import uk.gov.dwp.dataworks.services.ConfigKey.AMI_SEARCH_PATTERN
-import uk.gov.dwp.dataworks.services.ConfigKey.EMR_RELEASE_LABEL
-import uk.gov.dwp.dataworks.services.ConfigKey.JOB_FLOW_ROLE_BLACKLIST
-import uk.gov.dwp.dataworks.services.ConfigKey.S3_LOG_URI
-import uk.gov.dwp.dataworks.services.ConfigKey.SECURITY_CONFIGURATION
+import uk.gov.dwp.dataworks.services.ConfigKey.*
 
 @Service
 class ClusterCreationService {
@@ -40,6 +36,11 @@ class ClusterCreationService {
     }
 
     fun submitStepRequest(clusterName: String, creationRequest: CreationRequest) {
+        val serviceRole: String = configService.getIfEmpty(creationRequest.serviceRole, SERVICE_ROLE)
+        val jobFlowRole: String = configService.getIfEmpty(creationRequest.jobFlowRole, JOB_FLOW_ROLE)
+        val autoScalingRole: String = configService.getIfEmpty(creationRequest.autoScalingRole, AUTO_SCALING_ROLE)
+        val hostedZoneId: String = configService.getIfEmpty(creationRequest.hostedZoneId, HOSTED_ZONE_ID)
+
         val clusterRequest = RunJobFlowRequest.builder()
                 .name(clusterName)
                 .visibleToAllUsers(true)
@@ -48,12 +49,13 @@ class ClusterCreationService {
                 .repoUpgradeOnBoot(RepoUpgradeOnBoot.NONE)
                 .steps(formatSteps(creationRequest.steps))
                 .logUri(configService.getStringConfig(S3_LOG_URI))
-                .serviceRole(creationRequest.serviceRole)
-                .jobFlowRole(creationRequest.jobFlowRole)
+                .serviceRole(serviceRole)
+                .jobFlowRole(jobFlowRole)
+                .autoScalingRole(autoScalingRole)
                 .securityConfiguration(configService.getStringConfig(SECURITY_CONFIGURATION))
                 .applications(creationRequest.applications.map { Application.builder().name(it).build() })
                 .instances(formatInstanceConfig(creationRequest.customInstanceConfig))
-                .tags(Tag.builder().key("createdBy").value("clusterBroker").build())
+                .tags(Tag.builder().key("createdBy").value("clusterBroker").key("hostedZoneId").value(hostedZoneId).build())
                 .build()
 
         logger.info("Starting cluster $clusterName.")
