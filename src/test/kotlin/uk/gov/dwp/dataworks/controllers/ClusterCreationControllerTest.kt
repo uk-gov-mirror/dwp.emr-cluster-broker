@@ -22,10 +22,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import software.amazon.awssdk.services.emr.model.ActionOnFailure
-import uk.gov.dwp.dataworks.model.CreationRequest
-import uk.gov.dwp.dataworks.model.CustomInstanceConfig
-import uk.gov.dwp.dataworks.model.InstanceTemplate
-import uk.gov.dwp.dataworks.model.Step
+import software.amazon.awssdk.services.emr.model.Configuration
+import uk.gov.dwp.dataworks.model.*
 import uk.gov.dwp.dataworks.services.ClusterCreationService
 import uk.gov.dwp.dataworks.services.PrometheusMetricsService
 
@@ -88,6 +86,7 @@ class ClusterCreationControllerTest {
                 "testAutoScalingRole",
                 "testHostedZoneId",
                 CustomInstanceConfig("0.0.0.0/0", false, InstanceTemplate.SMALL,false),
+                listOf(EmrConfiguration("testClassification", mapOf("testProperty" to "testValue"))),
                 listOf(
                         Step("testStep1", ActionOnFailure.TERMINATE_JOB_FLOW, "test/jar/path/1"),
                         Step("testStep2", ActionOnFailure.CONTINUE, "test/jar/path/2")),

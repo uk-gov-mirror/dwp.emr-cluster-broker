@@ -3,6 +3,7 @@ package uk.gov.dwp.dataworks.model
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.databind.ObjectMapper
 import software.amazon.awssdk.services.emr.model.ActionOnFailure
+import software.amazon.awssdk.services.emr.model.Configuration
 import software.amazon.awssdk.services.emr.model.JobFlowInstancesConfig
 import java.time.ZoneId
 
@@ -14,8 +15,14 @@ data class CreationRequest @JsonCreator constructor(
         val autoScalingRole: String = "",
         val hostedZoneId: String = "",
         val customInstanceConfig: CustomInstanceConfig,
+        val customEmrConfigs: List<EmrConfiguration> = emptyList(),
         val steps: List<Step>,
         val applications: List<String>)
+
+data class EmrConfiguration @JsonCreator constructor(
+        val classification: String,
+        val properties: Map<String, String>
+)
 
 data class CustomInstanceConfig @JsonCreator constructor(
         val ec2SubnetId: String,

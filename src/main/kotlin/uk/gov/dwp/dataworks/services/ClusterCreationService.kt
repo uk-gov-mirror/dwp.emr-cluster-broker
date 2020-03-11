@@ -8,17 +8,12 @@ import software.amazon.awssdk.services.ec2.Ec2Client
 import software.amazon.awssdk.services.ec2.model.DescribeImagesRequest
 import software.amazon.awssdk.services.ec2.model.Filter
 import software.amazon.awssdk.services.emr.EmrAsyncClient
-import software.amazon.awssdk.services.emr.model.Application
-import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig
-import software.amazon.awssdk.services.emr.model.JobFlowInstancesConfig
+import software.amazon.awssdk.services.emr.model.*
 import software.amazon.awssdk.services.emr.model.MarketType.ON_DEMAND
 import software.amazon.awssdk.services.emr.model.MarketType.SPOT
-import software.amazon.awssdk.services.emr.model.RepoUpgradeOnBoot
-import software.amazon.awssdk.services.emr.model.RunJobFlowRequest
-import software.amazon.awssdk.services.emr.model.StepConfig
-import software.amazon.awssdk.services.emr.model.Tag
 import uk.gov.dwp.dataworks.model.CreationRequest
 import uk.gov.dwp.dataworks.model.CustomInstanceConfig
+import uk.gov.dwp.dataworks.model.EmrConfiguration
 import uk.gov.dwp.dataworks.model.Step
 import uk.gov.dwp.dataworks.services.ConfigKey.*
 
@@ -55,6 +50,7 @@ class ClusterCreationService {
                 .securityConfiguration(configService.getStringConfig(SECURITY_CONFIGURATION))
                 .applications(creationRequest.applications.map { Application.builder().name(it).build() })
                 .instances(formatInstanceConfig(creationRequest.customInstanceConfig))
+                .configurations(formatEmrConfigs(creationRequest.customEmrConfigs))
                 .tags(Tag.builder().key("createdBy").value("clusterBroker").key("hostedZoneId").value(hostedZoneId).build())
                 .build()
 
@@ -102,5 +98,14 @@ class ClusterCreationService {
                 .ec2SubnetId(customInstanceConfig.ec2SubnetId)
                 .keepJobFlowAliveWhenNoSteps(customInstanceConfig.keepAlivePostJob)
                 .build()
+    }
+
+    fun formatEmrConfigs(customEmrConfigs: List<EmrConfiguration>): List<Configuration> {
+        return customEmrConfigs.map {
+            Configuration.builder()
+                    .classification(it.classification)
+                    .properties(it.properties)
+                    .build()
+        }
     }
 }

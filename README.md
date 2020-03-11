@@ -41,6 +41,14 @@ To submit a request to the cluster broker for a new cluster the `/cluster/submit
     "instanceTemplate": "SMALL",
     "keepAlivePostJob": true
   },
+  "customEmrConfigs": [
+    {
+    "classification": "custom-classication",
+    "properties": {
+      "custom-property": "custom-value"
+      }
+    }
+  ],
   "steps": [
     {
       "name": "emr-setup",

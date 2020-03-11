@@ -8,11 +8,9 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.junit4.SpringRunner
-import software.amazon.awssdk.services.emr.model.ActionOnFailure
-import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig
-import software.amazon.awssdk.services.emr.model.MarketType
-import software.amazon.awssdk.services.emr.model.StepConfig
+import software.amazon.awssdk.services.emr.model.*
 import uk.gov.dwp.dataworks.model.CustomInstanceConfig
+import uk.gov.dwp.dataworks.model.EmrConfiguration
 import uk.gov.dwp.dataworks.model.InstanceTemplate
 import uk.gov.dwp.dataworks.model.Step
 
@@ -49,6 +47,22 @@ class ClusterCreationServiceTest {
     }
 
     @Test
+    fun `Formats EmrConfigs correctly`() {
+        val expectedConfigs = listOf(
+                createConfiguration("testClassification", mapOf("testProperty" to "testValue")),
+                createConfiguration("testClassification2", mapOf("testProperty2" to "testValue2")),
+                createConfiguration("testClassification3", mapOf("testProperty3" to "testValue3"))
+        )
+        val actualConfigs = clusterCreationService.formatEmrConfigs(listOf(
+                EmrConfiguration("testClassification", mapOf("testProperty" to "testValue")),
+                EmrConfiguration("testClassification2", mapOf("testProperty2" to "testValue2")),
+                EmrConfiguration("testClassification3", mapOf("testProperty3" to "testValue3"))
+        ))
+
+        assertThat(actualConfigs).containsExactlyElementsOf(expectedConfigs)
+    }
+
+    @Test
     fun `Can reconfigure JobConfig with custom values`() {
         val customConfig = CustomInstanceConfig("0.0.0.0/0", true, InstanceTemplate.LARGE, false)
         val actualConfig = clusterCreationService.formatInstanceConfig(customConfig)
@@ -79,4 +93,12 @@ class ClusterCreationServiceTest {
                 .hadoopJarStep(HadoopJarStepConfig.builder().jar("$stepName/jar").build())
                 .build()
     }
+
+    private fun createConfiguration(classification: String, properties: Map<String, String>): Configuration {
+        return Configuration.builder()
+                .classification(classification)
+                .properties(properties)
+                .build()
+    }
+
 }
