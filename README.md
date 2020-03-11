@@ -130,7 +130,7 @@ The Make file has the following dependencies:
 
 ### Cluster Broker Naming Conventions
 
-## Note, not all of this functionality has been implemented in the cluster broker yet, however as it is implemented should follow the standards below
+_Note, not all of this functionality has been implemented in the cluster broker yet, however as it is implemented should follow the standards below_
 
 - EMR Cluster
   - cluster-name-<uuid>
