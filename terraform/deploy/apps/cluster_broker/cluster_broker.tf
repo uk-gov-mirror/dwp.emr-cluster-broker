@@ -115,6 +115,17 @@ module emr-security-config {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
+# DNS Lambda
+# ---------------------------------------------------------------------------------------------------------------------
+
+module dns-lambda {
+  source   = "../../../modules/dns-lambda"
+  name     = var.name_prefix
+  region   = var.vpc_region
+  role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
 # IAM EMR
 # ---------------------------------------------------------------------------------------------------------------------
 module iam-emr {
@@ -126,3 +137,4 @@ module iam-emr {
   ebs_cmk       = data.terraform_remote_state.security-tools.outputs.ebs_cmk.arn
   ingest_bucket = data.terraform_remote_state.ingestion.outputs.s3_buckets.input_bucket
 }
+
