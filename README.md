@@ -127,3 +127,18 @@ The Make file has the following dependencies:
 - Python3 & pip3.
 - Terraform
 - AWS credentials allowing download of the variables from AWS.
+
+### Cluster Broker Naming Conventions
+
+## Note, not all of this functionality has been implemented in the cluster broker yet, however as it is implemented should follow the standards below
+
+- EMR Cluster
+  - cluster-name-<uuid>
+- IAM Roles
+  - cb-<role>-<uuid>
+- Security Groups
+  - cb-<uuid>
+- DNS Records
+  - <aws-cluster-id>.<domain>
+- Log (bucket path not the bucket itself)
+  - s3://path/logs/<aws-cluster-id>
