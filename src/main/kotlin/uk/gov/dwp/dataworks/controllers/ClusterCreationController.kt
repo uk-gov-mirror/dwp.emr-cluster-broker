@@ -1,5 +1,6 @@
 package uk.gov.dwp.dataworks.controllers
 
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.ExampleObject
@@ -57,6 +58,12 @@ class ClusterCreationController {
     @ExceptionHandler(InvalidJobFlowRoleException::class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "JobFlowRole is blacklisted and shouldn't be used")
     fun handleInvalidJobFlowRole() {
+        // Do nothing - annotations handle response
+    }
+
+    @ExceptionHandler(ValueInstantiationException::class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Unable to Deserialise Json String to Json Object")
+    fun handleValueInstantiationException() {
         // Do nothing - annotations handle response
     }
 }
