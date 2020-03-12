@@ -124,19 +124,6 @@ variable "links" {
   description = "(Optional) List of container names this container can communicate with without port mappings"
   default     = null
 }
-# https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_LogConfiguration.html
-variable "log_configuration" {
-  type = object({
-    logDriver = string
-    options   = map(string)
-    secretOptions = list(object({
-      name      = string
-      valueFrom = string
-    }))
-  })
-  description = "(Optional) Log configuration options to send to a custom log driver for the container. For more details, see https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_LogConfiguration.html"
-  default     = null
-}
 variable "mount_points" {
   type = list(object({
     containerPath = string
