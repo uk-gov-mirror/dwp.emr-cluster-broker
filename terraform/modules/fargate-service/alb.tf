@@ -17,8 +17,8 @@ resource "aws_lb_target_group" "lb_tg" {
   port        = var.container_port
   vpc_id      = var.vpc_id
   health_check {
-    path = var.lb_health_check_path
-    port = var.container_port
+    path     = var.lb_health_check_path
+    port     = var.container_port
     protocol = "HTTPS"
   }
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-tg" })

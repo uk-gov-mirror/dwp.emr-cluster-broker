@@ -42,7 +42,7 @@ module "ecs-fargate-task-definition" {
     },
     {
       name  = "clusterBroker_s3LogUri"
-      value = "TBC"
+      value = "s3://${data.terraform_remote_state.security-tools.outputs.logstore_bucket.id}/emr/"
     },
     {
       name  = "clusterBroker_securityConfiguration"
@@ -131,5 +131,6 @@ module iam-emr {
   common_tags   = local.common_tags
   ebs_cmk       = data.terraform_remote_state.security-tools.outputs.ebs_cmk.arn
   ingest_bucket = data.terraform_remote_state.ingestion.outputs.s3_buckets.input_bucket
+  s3_log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 }
 

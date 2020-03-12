@@ -27,7 +27,8 @@ data "aws_iam_policy_document" "task_role" {
   statement {
     actions = [
       "ec2:DescribeImages",
-      "elasticmapreduce:RunJobFlow"
+      "elasticmapreduce:RunJobFlow",
+      "iam:PassRole"
     ]
 
     resources = [

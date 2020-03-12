@@ -34,3 +34,8 @@ variable "ingest_bucket" {
   type        = string
   description = "(Required) The role to assume when doing an apply, defaults to ci"
 }
+
+variable "s3_log_bucket" {
+  type        = string
+  description = "(Required) The S3 Log Bucket"
+}
