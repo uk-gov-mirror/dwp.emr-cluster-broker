@@ -33,7 +33,8 @@ data class CustomInstanceConfig @JsonCreator constructor(
 data class Step @JsonCreator constructor(
         val name: String,
         val actionOnFailure: ActionOnFailure,
-        val jarPath: String)
+        val jarPath: String,
+        val args: List<String> = emptyList())
 
 enum class InstanceTemplate(val fileName: String) {
     SMALL("small.json"),

@@ -88,8 +88,8 @@ class ClusterCreationControllerTest {
                 CustomInstanceConfig("0.0.0.0/0", false, InstanceTemplate.SMALL,false),
                 listOf(EmrConfiguration("testClassification", mapOf("testProperty" to "testValue"))),
                 listOf(
-                        Step("testStep1", ActionOnFailure.TERMINATE_JOB_FLOW, "test/jar/path/1"),
-                        Step("testStep2", ActionOnFailure.CONTINUE, "test/jar/path/2")),
+                        Step("testStep1", ActionOnFailure.TERMINATE_JOB_FLOW, "test/jar/path/1", listOf("arg1", "arg2")),
+                        Step("testStep2", ActionOnFailure.CONTINUE, "test/jar/path/2", listOf("arg1", "arg2"))),
                 listOf("spark", "hdfs", "test"))
         return ObjectMapper().setVisibility(PropertyAccessor.FIELD, Visibility.ANY).writeValueAsString(testRequest)
     }

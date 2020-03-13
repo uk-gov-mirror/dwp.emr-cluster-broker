@@ -81,7 +81,7 @@ class ClusterCreationService {
             StepConfig.builder()
                     .name(it.name)
                     .actionOnFailure(it.actionOnFailure)
-                    .hadoopJarStep(HadoopJarStepConfig.builder().jar(it.jarPath).build())
+                    .hadoopJarStep(HadoopJarStepConfig.builder().jar(it.jarPath).args(it.args).build())
                     .build()
         }
     }

@@ -39,9 +39,9 @@ class ClusterCreationServiceTest {
     fun `Formats Steps correctly`() {
         val expectedSteps = listOf(createStep("step1"), createStep("step2"), createStep("step3"))
         val actualSteps = clusterCreationService.formatSteps(listOf(
-                Step("step1", ActionOnFailure.CONTINUE, "step1/jar"),
-                Step("step2", ActionOnFailure.CONTINUE, "step2/jar"),
-                Step("step3", ActionOnFailure.CONTINUE, "step3/jar")))
+                Step("step1", ActionOnFailure.CONTINUE, "step1/jar", listOf("arg1", "arg2")),
+                Step("step2", ActionOnFailure.CONTINUE, "step2/jar", listOf("arg1", "arg2")),
+                Step("step3", ActionOnFailure.CONTINUE, "step3/jar", listOf("arg1", "arg2"))))
 
         assertThat(actualSteps).containsExactlyElementsOf(expectedSteps)
     }
@@ -90,7 +90,7 @@ class ClusterCreationServiceTest {
         return StepConfig.builder()
                 .name(stepName)
                 .actionOnFailure(ActionOnFailure.CONTINUE)
-                .hadoopJarStep(HadoopJarStepConfig.builder().jar("$stepName/jar").build())
+                .hadoopJarStep(HadoopJarStepConfig.builder().jar("$stepName/jar").args(listOf("arg1", "arg2")).build())
                 .build()
     }
 
