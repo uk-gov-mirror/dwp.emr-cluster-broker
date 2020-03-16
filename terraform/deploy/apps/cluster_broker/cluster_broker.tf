@@ -61,6 +61,10 @@ module "ecs-fargate-task-definition" {
       value = module.iam-emr.cb_service_role
     },
     {
+      name = "clusterBroker_hostedZoneId"
+      value = data.aws_route53_zone.main.zone_id
+    },
+    {
       name  = "clusterBroker_autoScalingRole"
       value = module.iam-emr.cb_autoscaling_role
     }
