@@ -23,6 +23,8 @@ docker run -p 8443:8443 -e clusterBroker_awsRegion=<VALUE> -e clusterBroker_amiS
 ```
 Ensuring that `<VALUE>` is replaced with a suitable value for that `ConfigKey` entry.
 
+Note: the following values will default to the value after he colon, if values aren't passed in - `jobFlowRole` : `cb_job_flow_role`, `serviceRole` :  `cb_service_role`, `autoScalingRole` : `cb_autoscaling_role` and `hostedZoneID` : `local.parent_domain_name[local.environment]`. 
+
 ## Sending API requests
 Since [#17](https://github.com/dwp/emr-cluster-broker/pull/17) the broker only accepts connections over HTTPS.
 
