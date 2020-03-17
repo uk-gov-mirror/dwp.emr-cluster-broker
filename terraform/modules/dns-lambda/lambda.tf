@@ -19,7 +19,7 @@ resource "aws_lambda_function" "dns_lambda" {
   role          = aws_iam_role.lambda_execution_role.arn
   handler       = "index.handler"
   runtime       = "nodejs12.x"
-  publish       = true
+  publish       = false
 }
 
 resource "aws_iam_role" "lambda_execution_role" {
