@@ -35,11 +35,12 @@ class ClusterCreationService {
         val jobFlowRole: String = configService.getIfEmpty(creationRequest.jobFlowRole, JOB_FLOW_ROLE)
         val autoScalingRole: String = configService.getIfEmpty(creationRequest.autoScalingRole, AUTO_SCALING_ROLE)
         val hostedZoneId: String = configService.getIfEmpty(creationRequest.hostedZoneId, HOSTED_ZONE_ID)
+        val releaseLabel: String = configService.getIfEmpty(creationRequest.releaseLabel, EMR_RELEASE_LABEL)
 
         val clusterRequest = RunJobFlowRequest.builder()
                 .name(clusterName)
                 .visibleToAllUsers(true)
-                .releaseLabel(configService.getStringConfig(EMR_RELEASE_LABEL))
+                .releaseLabel(releaseLabel)
                 .customAmiId(getAmiId())
                 .repoUpgradeOnBoot(RepoUpgradeOnBoot.NONE)
                 .steps(formatSteps(creationRequest.steps))
