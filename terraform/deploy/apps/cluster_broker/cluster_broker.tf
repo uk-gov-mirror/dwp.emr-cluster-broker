@@ -18,7 +18,7 @@ module "ecs-fargate-task-definition" {
     secretOptions = []
     logDriver     = "awslogs"
     options = {
-      "awslogs-group"         = "/ecs/${data.aws_ecs_cluster.ecs_main_cluster.cluster_name}/${var.name_prefix}"
+      "awslogs-group"         = "/aws/ecs/${data.aws_ecs_cluster.ecs_main_cluster.cluster_name}/${var.name_prefix}"
       "awslogs-region"        = var.vpc_region
       "awslogs-stream-prefix" = "ecs"
     }
@@ -54,19 +54,19 @@ module "ecs-fargate-task-definition" {
     },
     {
       name  = "clusterBroker_jobFlowRole"
-      value = module.iam-emr.cb_job_flow_role
+      value = module.iam-emr.cb_job_flow_role.name
     },
     {
       name  = "clusterBroker_serviceRole"
-      value = module.iam-emr.cb_service_role
+      value = module.iam-emr.cb_service_role.name
     },
     {
-      name = "clusterBroker_hostedZoneId"
+      name  = "clusterBroker_hostedZoneId"
       value = data.aws_route53_zone.main.zone_id
     },
     {
       name  = "clusterBroker_autoScalingRole"
-      value = module.iam-emr.cb_autoscaling_role
+      value = module.iam-emr.cb_autoscaling_role.arn
     }
   ]
 }
