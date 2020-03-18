@@ -29,7 +29,16 @@ Note: the following values will default to the value after he colon, if values a
 Since [#17](https://github.com/dwp/emr-cluster-broker/pull/17) the broker only accepts connections over HTTPS.
 
 ### Submitting a Cluster creation step
-To submit a request to the cluster broker for a new cluster the `/cluster/submit`endpoint needs to be `POST`-ed to. The content of the `POST` request is defined by the `CreationRequest` class. An example request is as follows:
+To submit a request to the cluster broker for a new cluster the `/cluster/submit`endpoint needs to be `POST`-ed to.
+
+### Request headers
+| Header              | Description    |
+|---------------------|----------------|
+| X-correlation-id    | An identifier which will be entered into the logs to relate multiple log entries together. If not passed in, `clusterId` will be used. |
+
+
+### Request body
+The content of the `POST` request is defined by the `CreationRequest` class. For example
 ```json
 {
   "name": "test-cluster",

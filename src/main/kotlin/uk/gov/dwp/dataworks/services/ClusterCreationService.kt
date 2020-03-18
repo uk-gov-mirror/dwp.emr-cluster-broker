@@ -1,6 +1,5 @@
 package uk.gov.dwp.dataworks.services
 
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -8,19 +7,35 @@ import software.amazon.awssdk.services.ec2.Ec2Client
 import software.amazon.awssdk.services.ec2.model.DescribeImagesRequest
 import software.amazon.awssdk.services.ec2.model.Filter
 import software.amazon.awssdk.services.emr.EmrAsyncClient
-import software.amazon.awssdk.services.emr.model.*
+import software.amazon.awssdk.services.emr.model.Application
+import software.amazon.awssdk.services.emr.model.Configuration
+import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig
+import software.amazon.awssdk.services.emr.model.JobFlowInstancesConfig
 import software.amazon.awssdk.services.emr.model.MarketType.ON_DEMAND
 import software.amazon.awssdk.services.emr.model.MarketType.SPOT
+import software.amazon.awssdk.services.emr.model.RepoUpgradeOnBoot
+import software.amazon.awssdk.services.emr.model.RunJobFlowRequest
+import software.amazon.awssdk.services.emr.model.StepConfig
+import software.amazon.awssdk.services.emr.model.Tag
+import uk.gov.dwp.dataworks.logging.DataworksLogger
 import uk.gov.dwp.dataworks.model.CreationRequest
 import uk.gov.dwp.dataworks.model.CustomInstanceConfig
 import uk.gov.dwp.dataworks.model.EmrConfiguration
 import uk.gov.dwp.dataworks.model.Step
-import uk.gov.dwp.dataworks.services.ConfigKey.*
+import uk.gov.dwp.dataworks.services.ConfigKey.AMI_SEARCH_PATTERN
+import uk.gov.dwp.dataworks.services.ConfigKey.AUTO_SCALING_ROLE
+import uk.gov.dwp.dataworks.services.ConfigKey.EMR_RELEASE_LABEL
+import uk.gov.dwp.dataworks.services.ConfigKey.HOSTED_ZONE_ID
+import uk.gov.dwp.dataworks.services.ConfigKey.JOB_FLOW_ROLE
+import uk.gov.dwp.dataworks.services.ConfigKey.JOB_FLOW_ROLE_BLACKLIST
+import uk.gov.dwp.dataworks.services.ConfigKey.S3_LOG_URI
+import uk.gov.dwp.dataworks.services.ConfigKey.SECURITY_CONFIGURATION
+import uk.gov.dwp.dataworks.services.ConfigKey.SERVICE_ROLE
 
 @Service
 class ClusterCreationService {
     companion object {
-        val logger: Logger = LoggerFactory.getLogger(ClusterCreationService::class.java)
+        val logger: DataworksLogger = DataworksLogger(LoggerFactory.getLogger(ClusterCreationService::class.java))
     }
 
     @Autowired
@@ -55,11 +70,11 @@ class ClusterCreationService {
                 .tags(Tag.builder().key("createdBy").value("clusterBroker").key("hostedZoneId").value(hostedZoneId).build())
                 .build()
 
-        logger.info("Starting cluster $clusterName.")
+        logger.info("Starting cluster", "cluster_name" to clusterName)
         val response = EmrAsyncClient.builder().region(configService.awsRegion).build().runJobFlow(clusterRequest)
         response.whenComplete { _, prevStepError ->
             if (prevStepError != null)
-                logger.error("Failed to start cluster $clusterName", prevStepError)
+                logger.error("Failed to start cluster",  prevStepError, "cluster_name" to clusterName)
         }
     }
 

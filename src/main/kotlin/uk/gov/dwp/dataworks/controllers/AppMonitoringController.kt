@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -28,12 +26,6 @@ class AppMonitoringController {
     @GetMapping("/broker/environment")
     @ResponseStatus(HttpStatus.OK)
     fun listEnvironmentVars(): String {
-        val message = configurationService.getAllConfig().map { "\"${it.key}\":\"${it.value}\"" }.joinToString(separator = ",", prefix = "{", postfix = "}")
-        logger.info(message)
-        return message
-    }
-
-    companion object {
-        val logger: Logger = LoggerFactory.getLogger(AppMonitoringController::class.java)
+        return configurationService.getAllConfig().map { "\"${it.key}\":\"${it.value}\"" }.joinToString(separator = ",", prefix = "{", postfix = "}")
     }
 }

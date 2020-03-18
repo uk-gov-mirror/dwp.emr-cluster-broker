@@ -6,15 +6,17 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import org.slf4j.Logger
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.dwp.dataworks.logging.DataworksLogger
 import uk.gov.dwp.dataworks.model.CreationRequest
 import uk.gov.dwp.dataworks.model.InvalidJobFlowRoleException
 import uk.gov.dwp.dataworks.services.ClusterCreationService
@@ -24,7 +26,7 @@ import java.util.UUID
 @RestController
 class ClusterCreationController {
     companion object {
-        val logger: Logger = LoggerFactory.getLogger(ClusterCreationController::class.java)
+        val logger: DataworksLogger = DataworksLogger(LoggerFactory.getLogger(ClusterCreationController::class.java))
     }
 
     @Autowired
@@ -41,9 +43,13 @@ class ClusterCreationController {
     ])
     @PostMapping("/cluster/submit")
     @ResponseStatus(HttpStatus.OK)
-    fun submitRequestToCluster(@RequestBody requestBody: CreationRequest): String {
-        logger.info("Received submit event with name: ${requestBody.name} and steps ${requestBody.steps.map {it.name}}.")
+    fun submitRequestToCluster(
+            @RequestHeader("X-correlation-id", required = false, defaultValue = "") correlationId: String,
+            @RequestBody requestBody: CreationRequest): String {
         val clusterId = "cb-${requestBody.name}-${UUID.randomUUID()}"
+        val resolvedCorrelationId = StringUtils.defaultIfBlank(correlationId, clusterId)
+
+        logger.info("Received submit event", "cluster_name" to requestBody.name, "steps" to requestBody.steps.joinToString(",") { it.name }, "correlation_id" to resolvedCorrelationId)
 
         if(clusterCreationService.jobFlowRoleIsBlacklisted(requestBody.jobFlowRole)) {
             throw InvalidJobFlowRoleException("JobFlowRole ${requestBody.jobFlowRole} is blacklisted and shouldn't be used")
@@ -51,7 +57,7 @@ class ClusterCreationController {
         clusterCreationService.submitStepRequest(clusterId, requestBody)
         prometheusMetricsService.incrementCounter("clusters_created")
 
-        logger.info("Submitted request $clusterId.")
+        logger.info("Submitted request", "cluster_name" to requestBody.name, "steps" to requestBody.steps.joinToString(",") { it.name }, "correlation_id" to resolvedCorrelationId)
         return clusterId
     }
 
