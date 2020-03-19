@@ -72,6 +72,16 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  alias   = "management"
+  version = "~> 2.46.0"
+  region = "{{provider_region}}"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
+  }
+}
+
 locals {
   name = "emr-cluster-broker"
   environment = terraform.workspace == "default" ? "development" : terraform.workspace
