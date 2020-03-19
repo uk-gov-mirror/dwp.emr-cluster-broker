@@ -78,7 +78,7 @@ module "ecs-fargate-service" {
   source          = "../../../modules/fargate-service"
   name_prefix     = var.name_prefix
   region          = var.vpc_region
-  vpc_id          = data.terraform_remote_state.aws_emr_infra.outputs.vpc.aws_vpc
+  vpc_id          = data.terraform_remote_state.aws_emr_infra.outputs.vpc.aws_vpc.id
   private_subnets = data.terraform_remote_state.aws_emr_infra.outputs.vpc.aws_subnets_private.*.id
 
   ecs_cluster_name        = data.aws_ecs_cluster.ecs_main_cluster.cluster_name
