@@ -1,0 +1,29 @@
+jobs:
+- name: development
+  plan:
+  - get: emr-cluster-broker
+    trigger: true
+  - get: emr-cluster-broker-client-release
+    version: { tag: '0.0.1' }
+  - .: (( inject meta.plan.terraform-bootstrap ))
+    params:
+      DEPLOY_PATH: infra
+  - .: (( inject meta.plan.terraform-apply ))
+    config:
+      run:
+        dir: 'emr-cluster-broker/terraform/deploy/infra'
+  - .: (( inject meta.plan.terraform-plan ))
+    config:
+      run:
+        dir: 'emr-cluster-broker/terraform/deploy/infra'
+  - .: (( inject meta.plan.terraform-bootstrap ))
+    params:
+      DEPLOY_PATH: app
+  - .: (( inject meta.plan.terraform-apply ))
+    config:
+      run:
+        dir: 'emr-cluster-broker/terraform/deploy/app'
+  - .: (( inject meta.plan.terraform-plan ))
+    config:
+      run:
+        dir: 'emr-cluster-broker/terraform/deploy/app'

@@ -13,6 +13,7 @@ terraform {
 
 data "terraform_remote_state" "aws_emr_infra" {
   backend = "s3"
+  workspace = terraform.workspace
 
   config = {
     bucket         = "{{state_file_bucket}}"

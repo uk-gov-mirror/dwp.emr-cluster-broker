@@ -9,6 +9,11 @@ resource "aws_iam_role_policy_attachment" "emr_cluster_broker_client-attach" {
   policy_arn = aws_iam_policy.iam_policy_for_emr_cluster_broker_client.arn
 }
 
+resource "aws_iam_role_policy_attachment" "vpc_lambda" {
+  role       = aws_iam_role.emr_cluster_broker_client.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 data "aws_iam_policy_document" "lambda_assume_role" {
   statement {
     effect = "Allow"
@@ -59,7 +64,7 @@ resource "aws_lambda_function" "emr_cluster_broker_client" {
   runtime          = "python3.7"
   publish          = false
   timeout          = 60
-  depends_on       = ["aws_cloudwatch_log_group.emr_cluster_broker_client"]
+  depends_on       = [aws_cloudwatch_log_group.emr_cluster_broker_client]
 
   vpc_config {
     subnet_ids         = module.networking.outputs.aws_subnets_private.*.id

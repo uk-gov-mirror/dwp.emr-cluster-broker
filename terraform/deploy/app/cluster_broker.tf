@@ -2,7 +2,7 @@
 # ECS Task Definition
 # ---------------------------------------------------------------------------------------------------------------------
 module "ecs-fargate-task-definition" {
-  source                       = "../../../modules/fargate-task-definition"
+  source                       = "../../modules/fargate-task-definition"
   name_prefix                  = var.name_prefix
   region                       = var.vpc_region
   container_name               = var.name_prefix
@@ -75,7 +75,7 @@ module "ecs-fargate-task-definition" {
 ## ECS Service
 ## ---------------------------------------------------------------------------------------------------------------------
 module "ecs-fargate-service" {
-  source          = "../../../modules/fargate-service"
+  source          = "../../modules/fargate-service"
   name_prefix     = var.name_prefix
   region          = var.vpc_region
   vpc_id          = data.terraform_remote_state.aws_emr_infra.outputs.vpc.aws_vpc.id
@@ -105,7 +105,7 @@ module "ecs-fargate-service" {
 # EMR Security Configuration to be used by broker
 # ---------------------------------------------------------------------------------------------------------------------
 module emr-security-config {
-  source       = "../../../modules/emr-security-configuration"
+  source       = "../../modules/emr-security-configuration"
   name         = var.name_prefix
   emp_provider = "s3://${local.emr_encryption_materials_bucket}/encryption_materials_provider_jar/encryption-materials-provider-${local.emr_encryption_materials_version}.jar"
   region       = var.vpc_region
@@ -118,7 +118,7 @@ module emr-security-config {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module dns-lambda {
-  source   = "../../../modules/dns-lambda"
+  source   = "../../modules/dns-lambda"
   name     = var.name_prefix
   region   = var.vpc_region
   role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
@@ -128,7 +128,7 @@ module dns-lambda {
 # IAM EMR
 # ---------------------------------------------------------------------------------------------------------------------
 module iam-emr {
-  source        = "../../../modules/iam-emr"
+  source        = "../../modules/iam-emr"
   name          = var.name_prefix
   region        = var.vpc_region
   role_arn      = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"

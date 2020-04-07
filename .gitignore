@@ -28,3 +28,6 @@ logs/
 
 # Testing
 .kotlintest
+
+# CI
+aviator_pipeline.yml

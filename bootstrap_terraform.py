@@ -6,6 +6,7 @@ import jinja2
 import os
 import sys
 import yaml
+import glob
 
 
 def main():
@@ -27,22 +28,16 @@ def main():
         sys.exit(1)
 
     config_data = yaml.load(parameter['Parameter']['Value'], Loader=yaml.FullLoader)
-    with open('terraform/deploy/apps/cluster_broker/terraform.tf.j2') as in_template:
-        template = jinja2.Template(in_template.read())
-    with open('terraform/deploy/apps/cluster_broker/terraform.tf', 'w+') as terraform_tf_cb:
-        terraform_tf_cb.write(template.render(config_data))
-    with open('terraform/deploy/infra/terraform.tf.j2') as in_template:
-        template = jinja2.Template(in_template.read())
-    with open('terraform/deploy/infra/terraform.tf', 'w+') as terraform_tf_infra:
-        terraform_tf_infra.write(template.render(config_data))
-    with open('terraform/deploy/apps/cluster_broker/terraform.tfvars.j2') as in_template:
-        template = jinja2.Template(in_template.read())
-    with open('terraform/deploy/apps/cluster_broker/terraform.tfvars', 'w+') as terraform_tfvars_cb:
-        terraform_tfvars_cb.write(template.render(config_data))
-    with open('terraform/deploy/infra/terraform.tfvars.j2') as in_template:
-        template = jinja2.Template(in_template.read())
-    with open('terraform/deploy/infra/terraform.tfvars', 'w+') as terraform_tfvars_infra:
-        terraform_tfvars_infra.write(template.render(config_data))
+
+    j2_files = glob.glob('**/*.j2', recursive=True)
+
+    for template_path in j2_files:
+        out_path = template_path.replace('.j2', '')
+        with open(template_path) as in_template:
+            template = jinja2.Template(in_template.read())
+        with open(out_path, 'w+') as out_file:
+            out_file.write(template.render(config_data))
+
     print("Terraform config successfully created")
 
 
