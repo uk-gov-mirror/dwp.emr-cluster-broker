@@ -26,3 +26,8 @@ variable "region" {
   type        = string
   description = "(Required) The region to deploy into"
 }
+
+variable "internet_proxy_service_name" {
+  description = "Internet Proxy VPC Endpoint Service name"
+  type        = string
+}
