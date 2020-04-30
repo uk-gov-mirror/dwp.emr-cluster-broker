@@ -11,7 +11,7 @@ module cluster_broker_vpc {
   vpc_cidr_block                             = local.cidr_block[local.environment].emr-cluster-broker-vpc
   vpc_name                                   = local.name
 
-  dynamodb_endpoint    = false
+  dynamodb_endpoint    = true
   ecrapi_endpoint      = false
   ecrdkr_endpoint      = true
   ec2_endpoint         = true
