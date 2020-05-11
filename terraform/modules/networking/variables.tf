@@ -31,3 +31,8 @@ variable "internet_proxy_service_name" {
   description = "Internet Proxy VPC Endpoint Service name"
   type        = string
 }
+
+variable "frontend_vpc" {
+  description = "(Optional) The Frontend VPC Used for Peering"
+  type        = string
+}

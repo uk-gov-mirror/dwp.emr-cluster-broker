@@ -47,4 +47,5 @@ module networking {
   }
 
   internet_proxy_service_name = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
+  frontend_vpc                = data.terraform_remote_state.aws_analytical_env_infra.outputs.vpc.aws_vpc
 }
