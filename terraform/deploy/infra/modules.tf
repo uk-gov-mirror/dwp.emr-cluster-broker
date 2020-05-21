@@ -46,6 +46,6 @@ module networking {
     main_route_table_id = module.cluster_broker_vpc.vpc.main_route_table_id
   }
 
-  internet_proxy_service_name = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
+  internet_proxy_service_name = "mock"
   frontend_vpc                = "nope"
 }
