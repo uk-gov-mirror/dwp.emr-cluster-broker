@@ -5,23 +5,6 @@ jobs:
     trigger: true
     passed:
       - qa
-  - get: emr-cluster-broker-client-release
-    version: { tag: '0.0.1' }
-  - .: (( inject meta.plan.terraform-bootstrap ))
-    params:
-      DEPLOY_PATH: infra
-  - .: (( inject meta.plan.terraform-apply ))
-    config:
-      run:
-        dir: 'emr-cluster-broker/terraform/deploy/infra'
-    params:
-      TF_WORKSPACE: integration
-  - .: (( inject meta.plan.terraform-plan ))
-    config:
-      run:
-        dir: 'emr-cluster-broker/terraform/deploy/infra'
-    params:
-      TF_WORKSPACE: integration
   - .: (( inject meta.plan.terraform-bootstrap ))
     params:
       DEPLOY_PATH: app

@@ -120,8 +120,6 @@ Cluster Broker uses [Terraform](https://www.terraform.io/) to handle deployments
     make bootstrap
     ```
 
-#### Please note, the following steps need to be carried out in both terraform/deploy/infra/, and terraform/deploy/apps/cluster_broker/
-
 2. Initialise Terraform
     ```
     terraform init

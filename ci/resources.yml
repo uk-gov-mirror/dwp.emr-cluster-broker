@@ -14,12 +14,5 @@ resources:
     password: ((github_com.token))
     uri: https://github.com/dwp/emr-cluster-broker.git
   check_every: 15m
-- name: emr-cluster-broker-client-release
-  type: github-release
-  source:
-    owner: dwp
-    repository: emr-cluster-broker-client
-    access_token: ((github_com.token))
-  check_every: 15m
 
 

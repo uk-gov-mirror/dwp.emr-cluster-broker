@@ -57,7 +57,6 @@ meta:
             terraform apply -auto-approve terraform.plan
         inputs:
         - name: emr-cluster-broker
-        - name: emr-cluster-broker-client-release
         - name: terraform-config
     terraform-plan:
       task: terraform-plan
@@ -87,7 +86,6 @@ meta:
             terraform plan -var assume_role=ci -detailed-exitcode
         inputs:
         - name: emr-cluster-broker
-        - name: emr-cluster-broker-client-release
         - name: terraform-config
     terraform-output:
       task: terraform-output

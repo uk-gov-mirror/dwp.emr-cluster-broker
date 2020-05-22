@@ -9,45 +9,6 @@ jobs:
       context: $BUILD_JOB_NAME
       path: emr-cluster-broker-pr
       status: pending
-  - get: emr-cluster-broker-client-release
-    version: { tag: '0.0.1' }
-  - .: (( inject meta.plan.terraform-bootstrap ))
-    params:
-      DEPLOY_PATH: infra
-    input_mapping:
-      emr-cluster-broker: emr-cluster-broker-pr
-  - task: terraform-plan-infra
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: ((terraform.repository))
-          version: ((terraform12.version))
-          tag: ((terraform12.version))
-      params:
-        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
-        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
-        TF_INPUT: false
-        TF_WORKSPACE: qa
-        TF_CLI_ARGS_apply: -lock-timeout=300s
-        TF_CLI_ARGS_plan:  -lock-timeout=300s
-      run:
-        path: sh
-        dir: emr-cluster-broker/terraform/deploy/infra
-        args:
-          - -exc
-          - |
-            cp ../../../../terraform-config/terraform.tf .
-            cp ../../../../terraform-config/terraform.tfvars .
-            terraform init
-            terraform plan -var assume_role=ci
-      inputs:
-        - name: emr-cluster-broker
-        - name: emr-cluster-broker-client-release
-        - name: terraform-config
-    input_mapping:
-      emr-cluster-broker: emr-cluster-broker-pr
   - .: (( inject meta.plan.terraform-bootstrap ))
     params:
       DEPLOY_PATH: app
