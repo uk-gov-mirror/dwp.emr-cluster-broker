@@ -1,0 +1,42 @@
+name: 'Pull Request'
+
+on:
+  pull_request:
+    branches:
+      - master
+
+env:
+  IMAGE_NAME: dwpdigital/emr-cluster-broker
+
+jobs:
+  pull_request:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: terraform-setup
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.12.19
+      - name: terraform-fmt
+        id: fmt
+        run: terraform fmt --recursive
+
+      - name: build-docker-image
+        run: |
+          ./gradlew clean build
+          docker build -t ${{ env.IMAGE_NAME }}:latest .
+
+      - name: test
+        run: ./gradlew build test
+
+      - name: snyk-scan
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          args: --file=Dockerfile --policy-path=./.snyk --severity-threshold=high --exclude-base-image-vulns --org=dwp-dataworks
